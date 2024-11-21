@@ -25,21 +25,28 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	implementation 'org.springframework.boot:spring-boot-starter-security'		// spring security 사용을 위한 스타터 추가
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'		// 타임리프에서 스프링 시큐리티를 사용하기 위한 의존성 추가
+
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'		// webclient
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'	//Swagger
 	implementation "io.netty:netty-resolver-dns-native-macos:4.1.75.Final:osx-aarch_64"
-
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.4'
 	implementation 'com.fasterxml.jackson.core:jackson-core:2.15.4'
 	implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.4'
+
+	//jwt 토큰 관련
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.springframework.security:spring-security-test'	    // spring security를 테스트하기 위한 의존성 추가
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
