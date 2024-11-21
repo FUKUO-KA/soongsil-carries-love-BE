@@ -1,6 +1,5 @@
 package fukuoka.soongsil_carries_love.domain.highschool.entity;
 
-import fukuoka.soongsil_carries_love.common.BaseEntity;
 import fukuoka.soongsil_carries_love.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @Getter
-public class Highschool extends BaseEntity {
+public class Highschool {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, length = 255)
     private String schoolName;  // 고등학교 이름
