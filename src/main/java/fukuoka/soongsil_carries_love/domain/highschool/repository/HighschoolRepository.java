@@ -13,4 +13,7 @@ public interface HighschoolRepository extends JpaRepository<Highschool, Long> {
 
     @Query("SELECT h.schoolCode FROM Highschool h")
     List<String> findAllSchoolCodes();
+
+    @Query("SELECT h.schoolName FROM Highschool h")
+    List<String> findAllSchoolNames();
 }

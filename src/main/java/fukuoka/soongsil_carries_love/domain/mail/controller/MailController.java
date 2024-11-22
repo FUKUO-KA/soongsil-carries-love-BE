@@ -10,7 +10,7 @@ import java.util.HashMap;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/mail")
-public class MailController {
+public class MailController implements MailApi{
     private final MailService mailService;
     private int authNumber;     // 이메일 인중 번호 저장하는 변수
 
