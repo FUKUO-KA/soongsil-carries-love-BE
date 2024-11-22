@@ -22,6 +22,7 @@ public class UserConverter {
                 .studentId(joinDto.getStudentId()) // 학번
                 .highschool(highschool)
                 .schoolCode(highschool.getSchoolCode())
+                .role("USER")
                 .isDeleted(false) // 초기값 false
                 .createdAt(joinDto.getCreatedAt() != null ? joinDto.getCreatedAt() : LocalDateTime.now()) // 현재 시각
                 .build();
