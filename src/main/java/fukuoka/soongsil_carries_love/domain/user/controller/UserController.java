@@ -2,13 +2,8 @@ package fukuoka.soongsil_carries_love.domain.user.controller;
 
 import fukuoka.soongsil_carries_love.domain.user.dto.JoinDto;
 import fukuoka.soongsil_carries_love.domain.user.service.JoinService;
-import fukuoka.soongsil_carries_love.domain.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserController implements UserApi{
 
-    private final UserService userService;
     private final JoinService joinService;
 
     @PostMapping("/join")   // 회원가입
