@@ -43,10 +43,19 @@ public class MailService {
 
     // 이메일 발송
     public int sendMail(String receiverEmail) {
+
+        if (!isValidEmailDomain(receiverEmail)) {
+            throw new IllegalArgumentException("허용되지 않은 이메일 도메인입니다.");
+        }
         this.receiverEmail = receiverEmail;
         MimeMessage message = CreateMail(receiverEmail);
         javaMailSender.send(message);
 
         return randNum;
+    }
+
+    // 이메일 도메인 검증 메서드
+    private boolean isValidEmailDomain(String email) {
+        return email.endsWith("@soongsil.ac.kr") || email.endsWith("@ssu.ac.kr");
     }
 }
