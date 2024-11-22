@@ -11,14 +11,4 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService{
 
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    public Long save(JoinDto joinDto){
-        return userRepository.save(User.builder()
-                .email(joinDto.getEmail())
-                // 패스워드 암호화
-                .password(bCryptPasswordEncoder.encode(joinDto.getPassword()))
-                .build()).getId();
-    }
 }

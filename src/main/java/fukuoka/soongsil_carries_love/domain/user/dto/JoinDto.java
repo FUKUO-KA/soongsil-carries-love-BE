@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class JoinDto {
-    private String name;
+//    private String name;
     private String email;
     private String password;
     private String college; // 단과대학
@@ -18,6 +18,6 @@ public class JoinDto {
     private String nickname;
     private String studentId; // 학번
     private Gender gender;
-    private Highschool highschoolId;  // 학교 코드
+    private String schoolCode; // 학교 코드 (요청값으로 사용)
     private LocalDateTime createdAt; // 사용자 지정 생성일 (옵션)
 }

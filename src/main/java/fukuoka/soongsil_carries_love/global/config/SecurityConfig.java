@@ -1,22 +1,27 @@
 package fukuoka.soongsil_carries_love.global.config;
 
-import fukuoka.soongsil_carries_love.domain.user.service.UserDetailService;
+import fukuoka.soongsil_carries_love.domain.jwt.JWTFilter;
+import fukuoka.soongsil_carries_love.domain.jwt.JWTUtil;
+import fukuoka.soongsil_carries_love.domain.jwt.LoginFilter;
+import fukuoka.soongsil_carries_love.domain.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -25,11 +30,23 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final UserDetailService userService;
+    //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
+    private final AuthenticationConfiguration authenticationConfiguration;
+
+    private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    //AuthenticationManager Bean 등록
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
 
     // SecurityFilterChain을 통해 Spring Security 설정
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/swagger-ui/**",
@@ -37,12 +54,38 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .requestMatchers("/users/**", "/highschool/**", "/mail/**").permitAll() // 인증 없이 접근 가능 경로 설정
+                        .requestMatchers("/users/**", "/highschool/neis-api/fetch", "/mail/**", "/login", "/").permitAll() // 인증 없이 접근 가능 경로 설정
+                        .requestMatchers("/highschool/names").hasRole("USER")
                         .anyRequest().authenticated() // 그 외의 요청은 인증 필요
                 );
+        http.csrf((auth) -> auth.disable());
         http.formLogin((auth) -> auth.disable());
         http.httpBasic((auth) -> auth.disable());
-        http.csrf((auth) -> auth.disable());
+
+        // 프론트 허용 관련 코드
+        http.cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                        CorsConfiguration configuration = new CorsConfiguration();
+
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        configuration.setAllowCredentials(true);
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setMaxAge(3600L);
+
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                        return configuration;
+                    }
+                })));
+
+        // JWTFilter 등록
+        http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+
+        // 필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
+        http.addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, passwordEncoder, userRepository), UsernamePasswordAuthenticationFilter.class);
 
         // jwt 토큰 인증 방식을 사용하므로 stateless하게
         http.sessionManagement((session) -> session
@@ -50,38 +93,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-    // PasswordEncoder를 빈으로 등록
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    // DaoAuthenticationProvider 설정
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService);
-        authProvider.setPasswordEncoder(bCryptPasswordEncoder());
-        return authProvider;
-    }
-
-    // AuthenticationManager를 빈으로 등록
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.csrf(csrf -> csrf.disable()) // CSRF 비활성화
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/**").permitAll()
-//                        .anyRequest().permitAll() // 모든 요청 허용
-//                );
-//        return http.build();
-//    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
