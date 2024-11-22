@@ -31,7 +31,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/signup", "/user", "/", "/users/join", "/neis-api/fetch").permitAll() // 인증 없이 접근 가능 경로 설정
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
+                        .requestMatchers("/users/**", "/highschool/**", "/mail/**").permitAll() // 인증 없이 접근 가능 경로 설정
                         .anyRequest().authenticated() // 그 외의 요청은 인증 필요
                 );
         http.formLogin((auth) -> auth.disable());

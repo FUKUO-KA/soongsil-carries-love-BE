@@ -37,6 +37,9 @@ dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-core:2.15.4'
 	implementation 'com.fasterxml.jackson.module:jackson-module-parameter-names:2.15.4'
 
+	// 인증번호 발송 관련
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 	//jwt 토큰 관련
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'

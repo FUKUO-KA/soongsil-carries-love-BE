@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("")
+@RequestMapping("/highschool")
 public class HighschoolController implements HighschoolApi{
 
     private final HighschoolService highschoolService;

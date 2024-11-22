@@ -1,6 +1,18 @@
 spring:
   application:
     name: soongsilcarrieslove
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: fbgyrud828@gmail.com  # Gmail 주소
+    password: mhoonwfzzwbenobp  # Gmail 앱 비밀번호
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
 
   jpa:
     show-sql: true # sql ???? ??? ???? ??.
