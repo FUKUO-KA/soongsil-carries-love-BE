@@ -16,6 +16,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -100,5 +101,10 @@ public class HighschoolServiceImpl implements HighschoolService {
         }
 
         System.out.println("데이터 가져와서 저장완료요~!");
+    }
+
+    @Override
+    public List<String> getAllSchoolNames() {
+        return highschoolRepository.findAllSchoolNames();
     }
 }

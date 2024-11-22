@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/highschool")
@@ -25,6 +27,12 @@ public class HighschoolController implements HighschoolApi{
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch and save Highschool data.");
         }
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<List<String>> getAllSchoolNames() {
+        List<String> schoolNames = highschoolService.getAllSchoolNames();
+        return ResponseEntity.ok(schoolNames);
     }
 
     @GetMapping("/highschool/ranking")
