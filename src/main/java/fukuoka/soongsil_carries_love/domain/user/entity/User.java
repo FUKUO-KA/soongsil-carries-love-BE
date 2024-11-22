@@ -4,6 +4,7 @@ import fukuoka.soongsil_carries_love.common.BaseEntity;
 import fukuoka.soongsil_carries_love.domain.highschool.entity.Highschool;
 import fukuoka.soongsil_carries_love.enums.Gender;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
@@ -30,50 +31,47 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(length = 20)
     private String name;    // 이름
 
-    @Column(nullable = false)
+    @NotNull
     private String studentId;   // 학번
 
-    @Column(nullable = false)
+    @NotNull
     private String nickname;    // 닉네임
 
-    @Column(nullable = false)
     private String college;     // 단과대학
 
-    @Column(nullable = false)
     private String department;  // 학과
 
-    @Column(name = "email", nullable = false, length = 50, unique = true)
+    @NotNull
+    @Column(name = "email", length = 50, unique = true)
     private String email;       // 이메일
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Gender gender;      // 성별
 
+    @NotNull
     @Column(name = "password", nullable = false)
     private String password;    // 비밀번호
 
     // N:1 관계 설정 (User:Highschool)
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "highschool_id")
     private Highschool highschool;  // 사용자가 속한 고등학교
 
+    @NotNull
+    @Column(name = "school_code", length = 20)
+    private String schoolCode;
+
+    @NotNull
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "is_deleted", columnDefinition = "TINYINT(1) DEFAULT 0", nullable = false)
     private boolean isDeleted = false;
-
-    //    private LocalDateTime lastLoginAt;  // 마지막 로그인 일시
-
-
-//    @Builder
-//    public User(String email, String password, String auth) {
-//        this.email = email;
-//        this.password = password;
-//    }
 
     @Override // 권한 반환
     public Collection<? extends GrantedAuthority> getAuthorities() {
