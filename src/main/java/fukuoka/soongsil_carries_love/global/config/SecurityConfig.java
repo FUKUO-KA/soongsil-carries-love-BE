@@ -6,6 +6,7 @@ import fukuoka.soongsil_carries_love.domain.jwt.LoginFilter;
 import fukuoka.soongsil_carries_love.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +30,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    @Value("${server.env}")
+    private String serverEnv;
 
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -54,7 +58,7 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .requestMatchers("/users/**", "/highschool/neis-api/fetch", "/mail/**", "/login", "/").permitAll() // 인증 없이 접근 가능 경로 설정
+                        .requestMatchers("/users/**", "/highschool/neis-api/fetch", "/mail/**", "/login", "/", "/hc", "/env").permitAll() // 인증 없이 접근 가능 경로 설정
                         .requestMatchers("/highschool/names").hasRole("USER")
                         .anyRequest().authenticated() // 그 외의 요청은 인증 필요
                 );
@@ -62,25 +66,28 @@ public class SecurityConfig {
         http.formLogin((auth) -> auth.disable());
         http.httpBasic((auth) -> auth.disable());
 
-        // 프론트 허용 관련 코드
-        http.cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
-                        CorsConfiguration configuration = new CorsConfiguration();
-
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-
-                        return configuration;
-                    }
-                })));
+//        http.cors(
+//                (corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+//                    @Override
+//                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+//
+//                        CorsConfiguration configuration = new CorsConfiguration();
+//
+//                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+//                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+//                        configuration.setAllowedMethods(Collections.singletonList("*"));
+//                        configuration.setAllowCredentials(true);
+//                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+//                        configuration.setMaxAge(3600L);
+//
+//                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+//
+//                        return configuration;
+//                    }
+//                }))
+//        );
 
         // JWTFilter 등록
         http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
@@ -98,7 +105,19 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:8080")); // 특정 출처로 제한
+//        configuration.setAllowedOrigins(List.of("http://localhost:8080")); // 특정 출처로 제한
+
+        // 환경 변수에 따라 CORS Origin 설정
+        if ("blue".equals(serverEnv) || "green".equals(serverEnv)) {
+            configuration.setAllowedOrigins(List.of("http://15.165.3.220"));
+        } else {
+            configuration.setAllowedOrigins(List.of(
+                    "http://localhost:8080",
+                    "http://localhost:5173",
+                    "http://localhost:3000"
+            ));
+        }
+
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
