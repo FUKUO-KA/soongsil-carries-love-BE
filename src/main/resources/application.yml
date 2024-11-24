@@ -36,6 +36,7 @@ server:
 serverName: blue_server
 
 ---
+
 spring:
   config:
     activate:
@@ -47,41 +48,15 @@ server:
 
 serverName: green_server
 
-
-
-
-
-
 ---
+
 spring:
   application:
     name: soongsilcarrieslove
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: fbgyrud828@gmail.com  # Gmail 주소
-    password: mhoonwfzzwbenobp  # Gmail 앱 비밀번호
-    properties:
-      mail:
-        smtp:
-          auth: true
-          timeout: 5000
-          starttls:
-            enable: true
-  jwt:
-    secret: qlksplmdnsnnadskpbhsaafsacsdhvfbnvbkdmrjrkjfshajjdbjfnvmfvnhhrbfk
-
-
   jpa:
-    show-sql: true # sql ???? ??? ???? ??.
+    show-sql: true
     properties:
       format_sql: true
       dialect: org.hibernate.dialect.MySQL8Dialect
     hibernate:
       ddl-auto: update
-
-  datasource:
-    url: jdbc:mysql://localhost:3306/soongsilcarrieslove # mysql ?? ?? (?? ?? DB? ?? ? ??)
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: scl
-    password: Scl1234! # db ????
