@@ -58,9 +58,9 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .requestMatchers("/users/**", "/highschool/neis-api/fetch", "/mail/**", "/login", "/", "/hc", "/env").permitAll() // 인증 없이 접근 가능 경로 설정
-                        .requestMatchers("/highschool/names").hasRole("USER")
-                        .anyRequest().authenticated() // 그 외의 요청은 인증 필요
+//                        .requestMatchers("/users/**", "/highschool/neis-api/fetch", "/mail/**", "/login", "/", "/hc", "/env").permitAll() // 인증 없이 접근 가능 경로 설정
+//                        .requestMatchers("/highschool/names").hasRole("USER")
+                        .anyRequest().permitAll() // 그 외의 요청은 인증 필요
                 );
         http.csrf((auth) -> auth.disable());
         http.formLogin((auth) -> auth.disable());
