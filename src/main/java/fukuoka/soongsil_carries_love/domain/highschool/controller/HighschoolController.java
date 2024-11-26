@@ -29,13 +29,14 @@ public class HighschoolController implements HighschoolApi{
         }
     }
 
-    @GetMapping("/names")
-    public ResponseEntity<List<String>> getAllSchoolNames() {
-        List<String> schoolNames = highschoolService.getAllSchoolNames();
-        return ResponseEntity.ok(schoolNames);
-    }
+//    @GetMapping("/names")
+//    public ResponseEntity<List<String>> getAllSchoolNames() {
+//        List<String> schoolNames = highschoolService.getAllSchoolNames();
+//        return ResponseEntity.ok(schoolNames);
+//    }
 
-    @GetMapping("/highschool/ranking")
+
+    @GetMapping("/ranking")
     public void getHighschoolRanking() {
         return ;
     }

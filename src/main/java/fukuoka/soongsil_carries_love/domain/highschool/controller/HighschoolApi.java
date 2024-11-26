@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 public interface HighschoolApi {
 
-    @Operation(summary = "[Highschool] 고등학교 정보 가져오기", description = "SCHUL_KND_SC_NM(학교종류명) = \"고등학교인 데이터\" 가져와 DB에 저장, school_code가 pk")
+    @Operation(summary = "[Highschool] 고등학교 정보 가져오기 - 프론트에서 불필요", description = "SCHUL_KND_SC_NM(학교종류명) = \"고등학교인 데이터\" 가져와 DB에 저장, school_code가 pk")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK, 성공"),
             @ApiResponse(responseCode = "401", description = "Unauthorized, 인증 실패"),

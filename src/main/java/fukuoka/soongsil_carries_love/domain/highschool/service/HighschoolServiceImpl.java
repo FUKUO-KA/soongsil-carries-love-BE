@@ -15,9 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +58,6 @@ public class HighschoolServiceImpl implements HighschoolService {
                     .block(); // 동기 처리
 
             if (response == null || response.isEmpty()) {
-                System.out.println("API 응답이 없습니다.");
                 break;
             }
 
@@ -73,6 +71,7 @@ public class HighschoolServiceImpl implements HighschoolService {
                         String schoolCode = row.path("SD_SCHUL_CODE").asText().trim();
                         String schoolName = row.path("SCHUL_NM").asText().trim();
                         String coedu = row.path("COEDU_SC_NM").asText().trim();
+                        String sido = row.path("LCTN_SC_NM").asText().trim();
 
                         // 중복 확인: 기존 Set에 schoolCode가 없을 경우에만 저장
                         if (!schoolCode.isEmpty() && !existingSchoolCodes.contains(schoolCode)) {
@@ -80,6 +79,7 @@ public class HighschoolServiceImpl implements HighschoolService {
                             highschoolDto.setSchoolCode(schoolCode);
                             highschoolDto.setSchoolName(schoolName);
                             highschoolDto.setCoeduType(coedu);
+                            highschoolDto.setSido(sido);
 
                             Highschool highschoolEntity = highschoolConverter.toEntity(highschoolDto);
                             highschoolRepository.save(highschoolEntity);
@@ -99,12 +99,15 @@ public class HighschoolServiceImpl implements HighschoolService {
 
             currentPage++; // 다음 페이지로 이동
         }
-
-        System.out.println("데이터 가져와서 저장완료요~!");
     }
 
     @Override
     public List<String> getAllSchoolNames() {
-        return highschoolRepository.findAllSchoolNames();
+
+        List<Highschool> all = highschoolRepository.findAll();
+        Collections.sort(all, Comparator.comparing(Highschool::getSchoolName));
+
+        return all.stream().map(highschool -> highschool.getSchoolCode() + "," + highschool.getSchoolName() + "(" + highschool.getSido() + ")")
+                .collect(Collectors.toList());
     }
 }

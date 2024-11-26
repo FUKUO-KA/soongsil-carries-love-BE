@@ -1,12 +1,14 @@
 package fukuoka.soongsil_carries_love.domain.user.controller;
 
 import fukuoka.soongsil_carries_love.domain.user.dto.JoinDto;
+import fukuoka.soongsil_carries_love.domain.user.dto.UserInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 public interface UserApi {
 
@@ -21,7 +23,7 @@ public interface UserApi {
             @Parameter(name = "college", description = "(선택)사용자의 단과대학", required = false, example = "IT대학"),
             @Parameter(name = "department", description = "(선택)사용자의 학과/학부", required = false, example = "컴퓨터학부"),
             @Parameter(name = "nickname", description = "(필수)사용자의 닉네임", required = true, example = "나는 효경"),
-            @Parameter(name = "studentId", description = "(필수)사용자의 학번", required = true, example = "20192019"),
+            @Parameter(name = "studentId", description = "(필수)사용자의 학번", required = true, example = "19"),
             @Parameter(name = "gender", description = "(필수)사용자의 성별 (MALE, FEMALE, NONE 중 하나만 가능)", required = true, example = "MALE"),
             @Parameter(name = "schoolCode", description = "(필수)사용자가 선택한 고등학교 코드", required = true, example = "7010060")
     })
@@ -30,11 +32,13 @@ public interface UserApi {
 
 
     @Operation(summary = "[User] 본인 고등학교 내의 성별 분포 조회 API", description = "성별 인원 분포")
-    @GetMapping("/{highschoolId}/gender")
-    void getGenderStats();
+    @GetMapping("/gender-stats")
+    void getGenderStats(@RequestHeader("email") String email);
 
 
     @Operation(summary = "[User] 본인 고등학교의 학번별 인원 수 조회 API", description = "학번별 인원 분포")
-    @GetMapping("/{highschoolId}/student-number")
-    void getYearStats();
+    @GetMapping("/hakbeon-stats")
+    void getHakbeonStats(@RequestHeader("email") String email);
+
+    ResponseEntity<UserInfoDto> getUserInfo(@RequestHeader("email") String email);
 }

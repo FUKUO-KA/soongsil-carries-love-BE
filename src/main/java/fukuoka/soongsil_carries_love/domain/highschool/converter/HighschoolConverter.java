@@ -15,6 +15,7 @@ public class HighschoolConverter {
                 .schoolCode(highschoolFetchResponseDto.getSchoolCode())
                 .schoolName(highschoolFetchResponseDto.getSchoolName())
                 .coeduType(highschoolFetchResponseDto.getCoeduType())
+                .sido(highschoolFetchResponseDto.getSido())
                 .build();
     }
 }
