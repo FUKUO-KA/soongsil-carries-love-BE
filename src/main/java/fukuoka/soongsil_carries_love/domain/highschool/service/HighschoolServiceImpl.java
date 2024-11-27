@@ -3,10 +3,12 @@ package fukuoka.soongsil_carries_love.domain.highschool.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fukuoka.soongsil_carries_love.domain.highschool.dto.HighschoolFetchResponseDto;
+import fukuoka.soongsil_carries_love.domain.highschool.dto.*;
 import fukuoka.soongsil_carries_love.domain.highschool.entity.Highschool;
 import fukuoka.soongsil_carries_love.domain.highschool.repository.HighschoolRepository;
 import fukuoka.soongsil_carries_love.domain.highschool.converter.HighschoolConverter;
+import fukuoka.soongsil_carries_love.domain.user.repository.UserRepository;
+import fukuoka.soongsil_carries_love.enums.Gender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class HighschoolServiceImpl implements HighschoolService {
     private final HighschoolRepository highschoolRepository;
     private final HighschoolConverter highschoolConverter;
+    private final UserRepository userRepository;
     private final WebClient webClient = WebClient.builder()
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .baseUrl("https://open.neis.go.kr")
@@ -108,6 +111,64 @@ public class HighschoolServiceImpl implements HighschoolService {
         Collections.sort(all, Comparator.comparing(Highschool::getSchoolName));
 
         return all.stream().map(highschool -> highschool.getSchoolCode() + "," + highschool.getSchoolName() + "(" + highschool.getSido() + ")")
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public HighschoolUserCountResponseDto getUserCountByHighschool(String highschoolCode) {
+        long userCount = userRepository.countByHighschool_SchoolCode(highschoolCode);
+
+        // 유저가 없는 경우 예외 처리
+        if (userCount == 0) {
+            throw new IllegalArgumentException(highschoolCode + "에 속해있는 유저가 존재하지 않습니다.");
+        }
+
+        return highschoolConverter.toUserCountResponse(highschoolCode, userCount);
+    }
+
+    @Override
+    public HighschoolGenderRatioResponseDto getGenderRatioByHighschool(String highschoolCode) {
+        long total = userRepository.countByHighschool_SchoolCode(highschoolCode);
+        long maleCount = userRepository.countByHighschool_SchoolCodeAndGender(highschoolCode, Gender.MALE);
+        long femaleCount = userRepository.countByHighschool_SchoolCodeAndGender(highschoolCode, Gender.FEMALE);
+        long noneCount = userRepository.countByHighschool_SchoolCodeAndGender(highschoolCode, Gender.NONE);
+
+        double maleRatio = total == 0 ? 0 : (double) maleCount / total * 100;
+        double femaleRatio = total == 0 ? 0 : (double) femaleCount / total * 100;
+        double noneRatio = total == 0 ? 0 : (double) noneCount / total * 100;
+
+        return highschoolConverter.toGenderRatioResponse(highschoolCode, maleRatio, femaleRatio, noneRatio);
+    }
+
+    @Override
+    public HighschoolUserStudentIdResponseDto getStudentCountByYear(String highschoolCode) {
+
+        if (!highschoolRepository.existsByHighschoolCode(highschoolCode)) {
+            throw new IllegalArgumentException("해당 고등학교 코드를 가진 사용자가 없습니다: " + highschoolCode);
+        }
+
+        List<String> studentIds = highschoolRepository.findStudentIdsByHighschoolCode(highschoolCode);
+        Map<String, Long> studentIdDistribution = studentIds.stream()
+                .filter(Objects::nonNull) // Null 값 제거
+                .map(studentId -> {
+                    try {
+                        // studentId의 xx 부분 추출
+                        return studentId.substring(2, 4);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Invalid studentId format: " + studentId);
+                    }
+                })
+                .collect(Collectors.groupingBy(year -> year, Collectors.counting()));
+
+        return highschoolConverter.toResponseDto(studentIdDistribution);
+    }
+
+    @Override
+    public List<HighschoolRankingofUserCountResponseDto> getUserCountByHighschool() {
+        List<Object[]> result = highschoolRepository.findUserCountByHighschool();
+
+        return result.stream()
+                .map(record -> new HighschoolRankingofUserCountResponseDto((String) record[0], (Long) record[1]))
                 .collect(Collectors.toList());
     }
 }

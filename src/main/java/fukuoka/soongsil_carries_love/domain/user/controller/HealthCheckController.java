@@ -21,19 +21,19 @@ public class HealthCheckController {
     @Value("${serverName}")
     private String serverName;
 
-    @GetMapping("/hc")
-    public ResponseEntity<?> healthCheck(){
-        Map<String, String> responseData = new TreeMap<>();
-        responseData.put("serverName", serverName);
-        responseData.put("serverAddress", serverAddress);
-        responseData.put("serverPort", serverPort);
-        responseData.put("env", env);
-
-        return ResponseEntity.ok(responseData);
-    }
-
-    @GetMapping("/env")
-    public ResponseEntity<?> getEnv(){
-        return ResponseEntity.ok(env);
-    }
+//    @GetMapping("/hc")
+//    public ResponseEntity<?> healthCheck(){
+//        Map<String, String> responseData = new TreeMap<>();
+//        responseData.put("serverName", serverName);
+//        responseData.put("serverAddress", serverAddress);
+//        responseData.put("serverPort", serverPort);
+//        responseData.put("env", env);
+//
+//        return ResponseEntity.ok(responseData);
+//    }
+//
+//    @GetMapping("/env")
+//    public ResponseEntity<?> getEnv(){
+//        return ResponseEntity.ok(env);
+//    }
 }

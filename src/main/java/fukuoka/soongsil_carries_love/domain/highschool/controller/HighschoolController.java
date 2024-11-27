@@ -1,13 +1,11 @@
 package fukuoka.soongsil_carries_love.domain.highschool.controller;
 
+import fukuoka.soongsil_carries_love.domain.highschool.dto.*;
 import fukuoka.soongsil_carries_love.domain.highschool.service.HighschoolService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,15 +27,33 @@ public class HighschoolController implements HighschoolApi{
         }
     }
 
-//    @GetMapping("/names")
-//    public ResponseEntity<List<String>> getAllSchoolNames() {
-//        List<String> schoolNames = highschoolService.getAllSchoolNames();
-//        return ResponseEntity.ok(schoolNames);
-//    }
-
-
-    @GetMapping("/ranking")
-    public void getHighschoolRanking() {
-        return ;
+    @GetMapping("/names")
+    public ResponseEntity<List<String>> getAllSchoolNames() {
+        List<String> schoolNames = highschoolService.getAllSchoolNames();
+        return ResponseEntity.ok(schoolNames);
     }
-}
+
+    @PostMapping("/user-count")
+    public ResponseEntity<HighschoolUserCountResponseDto> getUserCount(@RequestBody HighschoolUserCountRequestDto requestDto) {
+        HighschoolUserCountResponseDto response = highschoolService.getUserCountByHighschool(requestDto.getHighschoolCode());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/gender-ratio")
+    public ResponseEntity<HighschoolGenderRatioResponseDto> getGenderRatio(@RequestBody HighschoolUserCountRequestDto requestDto) {
+        HighschoolGenderRatioResponseDto response = highschoolService.getGenderRatioByHighschool(requestDto.getHighschoolCode());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/student-count")
+    public ResponseEntity<HighschoolUserStudentIdResponseDto> getStudentCountByYear(
+            @RequestParam String highschoolCode) {
+        HighschoolUserStudentIdResponseDto responseDto = highschoolService.getStudentCountByYear(highschoolCode);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/highschool-ranking")
+    public ResponseEntity<List<HighschoolRankingofUserCountResponseDto>> getHighschoolRanking() {
+        List<HighschoolRankingofUserCountResponseDto> response = highschoolService.getUserCountByHighschool();
+        return ResponseEntity.ok(response);
+    }}
