@@ -27,6 +27,8 @@ public class Highschool {
     @Column(nullable = false, length = 4)
     private String coeduType;       // 남녀공학구분(남/녀/남녀공학)
 
+    private String sido;        // 시도명
+
     // 1:N 관계 설정
     @OneToMany(mappedBy = "highschool")
     private List<User> users;       // 고등학교에 속한 사용자들

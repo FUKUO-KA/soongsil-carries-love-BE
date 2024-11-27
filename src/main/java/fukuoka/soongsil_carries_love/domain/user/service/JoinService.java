@@ -7,14 +7,12 @@ import fukuoka.soongsil_carries_love.domain.user.dto.JoinDto;
 import fukuoka.soongsil_carries_love.domain.user.entity.User;
 import fukuoka.soongsil_carries_love.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class JoinService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final UserConverter userConverter;
     private final HighschoolRepository highschoolRepository;
 
@@ -30,10 +28,10 @@ public class JoinService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 학교 코드입니다."));
 
         // 패스워드 암호화
-        String encodedPassword = passwordEncoder.encode(joinDto.getPassword());
+//        String encodedPassword = passwordEncoder.encode(joinDto.getPassword());
 
         // JoinDto를 User 엔티티로 변환
-        User user = userConverter.toEntity(joinDto, encodedPassword, highschool);
+        User user = userConverter.toEntity(joinDto, joinDto.getPassword(), highschool);
 
         // User 엔티티 저장
         userRepository.save(user);

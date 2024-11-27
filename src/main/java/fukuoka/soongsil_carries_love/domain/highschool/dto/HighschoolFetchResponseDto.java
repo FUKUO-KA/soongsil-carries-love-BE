@@ -17,4 +17,7 @@ public class HighschoolFetchResponseDto {
     private String schoolName; // JSON의 SCHUL_NM에 대응
     @JsonProperty("COEDU_SC_NM")
     private String coeduType;  // JSON의 COEDU_SC_NM에 대응
+    @JsonProperty("SIDO")
+    private String sido;
+
 }
