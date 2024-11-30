@@ -31,7 +31,7 @@ public interface UserApi {
 
     @Operation(summary = "[User] 로그인 API", description = "미가입자: 400; 비밀번호 틀림: 401; 로그인 성공: 200;")
     @PostMapping("/login")
-    ResponseEntity<?> login(@RequestBody LoginDto loginDto) throws Exception;
+    ResponseEntity<UserInfoDto> login(@RequestBody LoginDto loginDto) throws Exception;
 
 
     @Operation(summary = "[User] 본인 고등학교 내의 성별 분포 조회 API", description = "성별 인원 분포")
