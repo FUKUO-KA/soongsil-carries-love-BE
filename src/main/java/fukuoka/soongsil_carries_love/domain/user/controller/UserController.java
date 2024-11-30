@@ -27,7 +27,7 @@ public class UserController implements UserApi{
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) throws Exception{
+    public ResponseEntity<UserInfoDto> login(@RequestBody LoginDto loginDto) throws Exception{
         try {
             UserInfoDto userInfoDto = userService.login(loginDto);
 
