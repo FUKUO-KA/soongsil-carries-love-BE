@@ -1,14 +1,13 @@
 package fukuoka.soongsil_carries_love.domain.user.controller;
 
 import fukuoka.soongsil_carries_love.domain.user.dto.JoinDto;
+import fukuoka.soongsil_carries_love.domain.user.dto.LoginDto;
 import fukuoka.soongsil_carries_love.domain.user.dto.UserInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 public interface UserApi {
 
@@ -29,6 +28,10 @@ public interface UserApi {
     })
     @GetMapping("/join")
     ResponseEntity<String> joinUser(@ModelAttribute JoinDto joinDto);
+
+    @Operation(summary = "[User] 로그인 API", description = "미가입자: 400; 비밀번호 틀림: 401; 로그인 성공: 200;")
+    @PostMapping("/login")
+    ResponseEntity<?> login(@RequestBody LoginDto loginDto) throws Exception;
 
 
     @Operation(summary = "[User] 본인 고등학교 내의 성별 분포 조회 API", description = "성별 인원 분포")
