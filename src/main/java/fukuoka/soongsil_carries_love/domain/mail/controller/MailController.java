@@ -1,44 +1,42 @@
 package fukuoka.soongsil_carries_love.domain.mail.controller;
 
-import fukuoka.soongsil_carries_love.domain.mail.service.MailService;
+import fukuoka.soongsil_carries_love.domain.mail.AuthNum;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/mail")
 public class MailController implements MailApi{
-    private final MailService mailService;
-    private int authNumber;     // 이메일 인중 번호 저장하는 변수
 
     // 인증 이메일 전송
     @PostMapping("/sendAuthNum")
-    public HashMap<String, Object> mailSend(@RequestParam String receiverEmail){
-        HashMap<String, Object> map = new HashMap<>();
+    public ResponseEntity<?> mailSend(@RequestParam String receiverEmail){
 
-        try{
-            authNumber = mailService.sendMail(receiverEmail);
-            String num = String.valueOf(authNumber);
-
-            map.put("success", Boolean.TRUE);
-            map.put("number", num);
-        } catch (Exception e){
-            map.put("success", Boolean.FALSE);
-            map.put("error", e.getMessage());
+        if (!receiverEmail.endsWith("@soongsil.ac.kr") && !receiverEmail.endsWith("@ssu.ac.kr")){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        return map;
+        return new ResponseEntity<>(receiverEmail, HttpStatus.OK);
     }
 
     // 인증번호 일치여부 확인
     @GetMapping("/checkAuthNum")
-    public ResponseEntity<?> mailCheck(@RequestParam String userNumber) {
+    public ResponseEntity<?> mailCheck(@RequestParam Integer userInputAuthNum, @RequestParam String email) {
+        // 인증번호를 발급하지 않은 이메일이라면 401
+        if (!AuthNum.AUTH_NUMBER_MAP.containsKey(email)){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
 
-        boolean isMatch = userNumber.equals(String.valueOf(authNumber));
+        Integer realAuthNum = AuthNum.AUTH_NUMBER_MAP.get(email);
+        if (!realAuthNum.equals(userInputAuthNum)){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
-        return ResponseEntity.ok(isMatch);
+        AuthNum.AUTH_NUMBER_MAP.remove(email);  // 인증완료 하였으므로 삭제
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 }
